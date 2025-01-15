@@ -1,9 +1,5 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
-import path from 'path';
-import fs from 'fs';
-
-const speechFile = path.resolve('./speech.mp3');
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -14,19 +10,21 @@ const openai = new OpenAI({
 export async function POST(request: Request, res: Response) {
   try {
     const { text } = await request.json();
-    console.log('text: ', text);
 
     const response = await openai.audio.speech.create({
       model: 'tts-1',
       voice: 'alloy',
       input: text,
-      response_format: 'mp3',
     });
 
-    // const buffer = Buffer.from(await response.arrayBuffer());
-    // await fs.promises.writeFile(speechFile, buffer);
+    // Convert the Response object to a Buffer
+    const audioBuffer = await response.arrayBuffer();
 
-    return NextResponse.json(response);
+    // Convert Buffer to Base64 (for sending to frontend)
+    const base64Audio = Buffer.from(audioBuffer).toString('base64');
+
+    // Return the Base64-encoded audio
+    return NextResponse.json({ audio: `data:audio/wav;base64,${base64Audio}` });
   } catch (error: any) {
     console.error(
       'Error calling OpenAI API:',

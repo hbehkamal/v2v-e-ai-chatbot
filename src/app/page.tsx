@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Loading, MessageItem, RecorderButton } from '@/components';
 import { IMessageItem } from '@/type';
@@ -8,6 +8,7 @@ import { convertTextToVoice, convertVoiceToText, getAIResponse } from '@/api';
 const ChatPage = () => {
   const [messages, setMessages] = useState<IMessageItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleRecord = async (blob: Blob) => {
     setLoading(true);
@@ -21,7 +22,9 @@ const ChatPage = () => {
       setMessages((prev) => [...prev, { content: aiResponse, user: 'system' }]);
 
       // Step 3: Convert AI Response to Voice
-      const voiceResponse = await convertTextToVoice(aiResponse);
+      const { audio } = await convertTextToVoice(aiResponse);
+      audioRef.current = new Audio(audio);
+      audioRef.current?.play();
     } catch (error) {
       console.error(error);
     } finally {

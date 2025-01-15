@@ -24,14 +24,16 @@ export const getAIResponse = async (text: string): Promise<string> => {
 
 export const convertTextToVoice = async (
   text: string
-): Promise<ArrayBuffer> => {
+): Promise<{ audio: string }> => {
   const response = await axios.post(
     '/api/text-to-speech',
     { text },
     {
-      responseType: 'arraybuffer',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }
   );
-  console.log('convertTextToVoice: ', response);
+
   return response.data;
 };
