@@ -1,6 +1,5 @@
-'use client';
-
 import { FC, useEffect } from 'react';
+
 import { useReactMediaRecorder } from 'react-media-recorder';
 
 import { IRecorderButton } from './RecorderButton.type';
