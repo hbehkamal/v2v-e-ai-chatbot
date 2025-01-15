@@ -1,4 +1,4 @@
 export interface IMessageItem {
-  user: 'AI' | 'You';
-  text: string;
+  user: 'system' | 'user';
+  content: string;
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useEffect } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 
@@ -5,7 +7,9 @@ import { IRecorderButton } from './RecorderButton.type';
 
 const RecorderButton: FC<IRecorderButton> = ({ onRecord }) => {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ audio: true });
+    useReactMediaRecorder({
+      audio: true,
+    });
 
   const toggleRecording = () => {
     if (status === 'recording') {
@@ -42,7 +46,6 @@ const RecorderButton: FC<IRecorderButton> = ({ onRecord }) => {
       >
         {status === 'recording' ? 'Stop Recording' : 'Start Recording'}
       </button>
-      <audio src={mediaBlobUrl} controls autoPlay />
     </>
   );
 };
