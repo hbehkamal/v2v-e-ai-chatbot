@@ -1,25 +1,33 @@
-import { FC } from 'react';
+import { FC, forwardRef } from 'react';
 
-import { IMessageItem } from '@/type';
+import { IMessageItem } from './MessageItem.type';
 
-const MessageItem: FC<IMessageItem> = ({ user, content }) => {
-  return (
-    <div
-      className={`flex mb-4 ${
-        user === 'user' ? 'justify-end' : 'justify-start'
-      }`}
-    >
+const MessageItem = forwardRef<HTMLDivElement, IMessageItem>(
+  ({ content, user, isSpeaking }, ref) => {
+    // const MessageItem: FC<IMessageItem> = ({ user, content, isSpeaking, ref }) => {
+    return (
       <div
-        className={`${
+        ref={ref}
+        className={`flex mb-4 ${
           user === 'user'
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-300 text-gray-800'
-        } max-w-xs p-3 rounded-lg`}
+            ? 'justify-end'
+            : `justify-start ${isSpeaking && 'animate-pulse'}`
+        }`}
       >
-        <p className="text-sm font-medium">{content}</p>
+        <div
+          className={`${
+            user === 'user'
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-300 text-gray-800'
+          } max-w-xs p-3 rounded-lg`}
+        >
+          <p className="text-sm font-medium">{content}</p>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
+MessageItem.displayName = 'MessageItem';
 
 export default MessageItem;
