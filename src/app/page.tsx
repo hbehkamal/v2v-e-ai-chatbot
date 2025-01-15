@@ -1,55 +1,18 @@
 'use client';
-import { useRef, useState } from 'react';
-
-import { convertTextToVoice, convertVoiceToText, getAIResponse } from '@/api';
 import { Loading, MessageItem, RecorderButton } from '@/components';
-import { IMessage } from '@/type';
+
+import { useChatPage } from './chat.hook';
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToNewMessage = () => {
-    messagesEndRef.current?.scrollIntoView({
-      block: 'end',
-      behavior: 'smooth',
-    });
-  };
-
-  const handleRecord = async (blob: Blob) => {
-    setLoading(true);
-    try {
-      // Step 1: Convert Voice to Text
-      const userMessage = await convertVoiceToText(blob);
-      setMessages((prev) => [...prev, { content: userMessage, user: 'user' }]);
-
-      // Step 2: Get AI Response
-      const aiResponse = await getAIResponse(userMessage);
-      setMessages((prev) => [...prev, { content: aiResponse, user: 'system' }]);
-      scrollToNewMessage();
-
-      // Step 3: Convert AI Response to Voice
-      const { audio } = await convertTextToVoice(aiResponse);
-      audioRef.current = new Audio(audio);
-      audioRef.current?.play();
-
-      // Simple voice animation
-      setIsSpeaking(true);
-      audioRef.current.addEventListener('ended', () => setIsSpeaking(false));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleStopSpeaking = () => {
-    audioRef.current?.pause();
-    setIsSpeaking(false);
-  };
+  const {
+    messages,
+    loading,
+    handleRecord,
+    handleStopSpeaking,
+    isSpeaking,
+    messagesEndRef,
+    audioRef,
+  } = useChatPage();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600">
